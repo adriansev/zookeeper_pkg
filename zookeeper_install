@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+VER="3.8.0"
+URL="https://dlcdn.apache.org/zookeeper/zookeeper-${VER}/apache-zookeeper-${VER}-bin.tar.gz"
+HASH="https://downloads.apache.org/zookeeper/zookeeper-${VER}/apache-zookeeper-${VER}-bin.tar.gz.sha512"
+
+GZNAME=$(basename ${URL})
+HASHNAME=$(basename ${HASH})
+
+#[[ -f ${GZNAME} ]] && rm -rf ${GZNAME}
+#[[ -f ${HASHNAME} ]] && rm -rf ${HASHNAME}
+#curl -O ${URL} || { echo "Download error of archive"; exit 1; }
+#curl -O ${HASH} || { echo "Download error of HASH file"; exit 1; }
+
+sha512sum -c ${HASHNAME} || { echo "Hash verification failure"; exit 1; }
+
+extract_dir="zk_temp"
+[[ -e ${extract_dir} ]] && rm -rf ${extract_dir}
+mkdir -p ${extract_dir}
+tar_dir=$(tar --no-recursion -tf ${GZNAME} | awk -F/ '{print $1}' | sort -u)
+
+tar -xvf ${GZNAME} --directory ${extract_dir} "${tar_dir}" &&  mv ${extract_dir}/${tar_dir}/* ${extract_dir}/ && rm -rf ${extract_dir}/${tar_dir}
+
+# install ZK jars
+mkdir -p /usr/share/java/zookeeper
+rsync -ahuHAXW ${extract_dir}/lib/ /usr/share/java/zookeeper/ && rm -rf ${extract_dir}
+# rm -rf ${GZNAME} ${HASHNAME}
+
+# sync ZK congiguration
+mkdir -p /etc/zookeeper
+rsync -ahuHAXW etc/zookeeper/ /etc/zookeeper/
+
+# sync ZK scripts
+rsync -ahuHAXW bin/ /usr/local/bin/
+
+# install ZK sysconfig
+cp -f sysconfig/zookeeper.env /etc/sysconfig
+
+# install systemd service
+cp zookeeper@.service /etc/systemd/system/
+systemctl daemon-reload

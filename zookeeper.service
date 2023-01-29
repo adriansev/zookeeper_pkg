@@ -1,0 +1,15 @@
+[Unit]
+Description=ZooKeeper server, conf used: /etc/zookeeper/%I.cfg
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+ENVIRONMENT="ZK_SYS_ENV=/etc/sysconfig/zookeeper.env"
+SyslogIdentifier=ZooKeeper[%i]
+Type=simple
+WorkingDirectory=/tmp
+
+ExecStart=/usr/bin/bash -c "source ${ZK_SYS_ENV} && exec /usr/bin/java -cp "${CLASSPATH}" ${ZK_JAVA_CMD} /etc/zookeeper/%I.cfg || echo 'No ZK_SYS_ENV file' 1>&2 "
+
+[Install]
+WantedBy=multi-user.target
