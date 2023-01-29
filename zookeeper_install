@@ -45,4 +45,3 @@ cp -f sysconfig/zookeeper.env /etc/sysconfig/
 # install systemd service
 cp zookeeper@.service /etc/systemd/system/
 systemctl daemon-reload
-

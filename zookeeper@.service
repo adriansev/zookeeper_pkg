@@ -9,10 +9,9 @@ User=zookeeper
 Group=zookeeper
 SyslogIdentifier=ZooKeeper[%i]
 
-Environment="ZK_SYS_ENV=/etc/sysconfig/zookeeper.env"
 WorkingDirectory=/var/zookeeper
 
-ExecStart=/usr/bin/bash -c "source ${ZK_SYS_ENV} && exec /usr/bin/java -cp "${CLASSPATH}" ${ZK_JAVA_CMD} /etc/zookeeper/%I.cfg || echo 'No ZK_SYS_ENV file' 1>&2 "
+ExecStart=/usr/bin/bash -c 'source /etc/sysconfig/zookeeper.env; exec /usr/bin/java -cp $CLASSPATH $ZK_JAVA_CMD /etc/zookeeper/%I.cfg '
 
 [Install]
 WantedBy=multi-user.target
