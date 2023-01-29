@@ -19,30 +19,30 @@ extract_dir="zk_temp"
 mkdir -p ${extract_dir}
 tar_dir=$(tar --no-recursion -tf ${GZNAME} | awk -F/ '{print $1}' | sort -u)
 
-tar -xvf ${GZNAME} --directory ${extract_dir} "${tar_dir}" &&  mv ${extract_dir}/${tar_dir}/* ${extract_dir}/ && rm -rf ${extract_dir}/${tar_dir}
+tar -xvf ${GZNAME} --directory ${extract_dir} "${tar_dir}" > /dev/null &&  mv ${extract_dir}/${tar_dir}/* ${extract_dir}/ && rm -rf ${extract_dir}/${tar_dir}
 
 # Setup zookeeper user
 getent group zookeeper >/dev/null || groupadd -r zookeeper
 getent passwd zookeeper >/dev/null || useradd -r -g zookeeper -d / -s /sbin/nologin zookeeper
 
+# Create directories
+mkdir -p /usr/share/java/zookeeper /etc/zookeeper /var/log/zookeeper /var/zookeeper
+chown -R zookeeper:zookeeper /etc/zookeeper /var/log/zookeeper /var/zookeeper
+
 # install ZK jars
-mkdir -p /usr/share/java/zookeeper
 rsync -ahuHAXW ${extract_dir}/lib/ /usr/share/java/zookeeper/ && rm -rf ${extract_dir}
 # rm -rf ${GZNAME} ${HASHNAME}
 
 # sync ZK congiguration
-mkdir -p /etc/zookeeper
 rsync -ahuHAXW etc/zookeeper/ /etc/zookeeper/
 
 # sync ZK scripts
 rsync -ahuHAXW bin/ /usr/local/bin/
 
 # install ZK sysconfig
-cp -f sysconfig/zookeeper.env /etc/sysconfig
+cp -f sysconfig/zookeeper.env /etc/sysconfig/
 
 # install systemd service
 cp zookeeper@.service /etc/systemd/system/
 systemctl daemon-reload
-
-chown -R zookeeper:zookeeper /etc/zookeeper /var/log/zookeeper /var/zookeeper
 
