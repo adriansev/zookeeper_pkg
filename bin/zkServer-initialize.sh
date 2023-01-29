@@ -53,6 +53,7 @@ initialize() {
     fi
 
     touch "${ZOO_DATADIR}/initialize"
+    chown -R zookeeper:zookeeper ${ZOO_DATADIR}
 }
 
 while [ ! -z "$1" ]; do

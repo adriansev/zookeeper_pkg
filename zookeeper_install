@@ -21,6 +21,10 @@ tar_dir=$(tar --no-recursion -tf ${GZNAME} | awk -F/ '{print $1}' | sort -u)
 
 tar -xvf ${GZNAME} --directory ${extract_dir} "${tar_dir}" &&  mv ${extract_dir}/${tar_dir}/* ${extract_dir}/ && rm -rf ${extract_dir}/${tar_dir}
 
+# Setup zookeeper user
+getent group zookeeper >/dev/null || groupadd -r zookeeper
+getent passwd zookeeper >/dev/null || useradd -r -g zookeeper -d / -s /sbin/nologin zookeeper
+
 # install ZK jars
 mkdir -p /usr/share/java/zookeeper
 rsync -ahuHAXW ${extract_dir}/lib/ /usr/share/java/zookeeper/ && rm -rf ${extract_dir}
@@ -39,3 +43,6 @@ cp -f sysconfig/zookeeper.env /etc/sysconfig
 # install systemd service
 cp zookeeper@.service /etc/systemd/system/
 systemctl daemon-reload
+
+chown -R zookeeper:zookeeper /etc/zookeeper /var/log/zookeeper /var/zookeeper
+
