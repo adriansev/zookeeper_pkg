@@ -11,6 +11,7 @@ SyslogIdentifier=ZooKeeper[%i]
 Restart=on-failure
 RestartSec=1
 PrivateTmp=yes
+ProtectSystem=full
 
 WorkingDirectory=/var/zookeeper
 
