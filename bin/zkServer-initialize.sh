@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[[ -f /etc/sysconfig/zookeeper.env ]] && source /etc/sysconfig/zookeeper.env || { echo "/etc/sysconfig/zookeeper.env not found" ; exit 1; }
+[[ -f /etc/zookeeper/zk_main.env ]] && source /etc/zookeeper/zk_main.env || { echo "/etc/zookeeper/zk_main.env not found" ; exit 1; }
 ZOO_LOG_FILE="${HOME}/zookeeper-${USER}-initialize-${HOSTNAME}.log"
 ZOOCFG="${ZOOCFGDIR}/zoo.cfg"
 
