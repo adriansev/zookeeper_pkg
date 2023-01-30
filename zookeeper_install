@@ -39,9 +39,6 @@ rsync -ahuHAXW etc/zookeeper/ /etc/zookeeper/
 # sync ZK scripts
 rsync -ahuHAXW bin/ /usr/local/bin/
 
-# install ZK sysconfig
-cp -f sysconfig/zookeeper.env /etc/sysconfig/
-
 # install systemd service
 cp zookeeper@.service /etc/systemd/system/
 systemctl daemon-reload
